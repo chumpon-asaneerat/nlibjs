@@ -1,0 +1,19 @@
+{
+  "name": "nlib.js",
+  "version": "1.0.0",
+  "description": "NLib Javascript Library",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chumpon-asaneerat/nlibjs.git"
+  },
+  "author": "Chumpon Asaneerat",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/chumpon-asaneerat/nlibjs/issues"
+  },
+  "homepage": "https://github.com/chumpon-asaneerat/nlibjs#readme"
+}
