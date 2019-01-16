@@ -15,5 +15,22 @@
   "bugs": {
     "url": "https://github.com/chumpon-asaneerat/nlibjs/issues"
   },
-  "homepage": "https://github.com/chumpon-asaneerat/nlibjs#readme"
+  "homepage": "https://github.com/chumpon-asaneerat/nlibjs#readme",
+  "dependencies": {
+    "@types/gulp-debug": "^2.0.31",
+    "@types/gulp-insert": "^0.5.7",
+    "@types/gulp-sort": "0.0.32",
+    "gulp": "^4.0.0",
+    "gulp-autoprefixer": "^6.0.0",
+    "gulp-concat": "^2.6.1",
+    "gulp-connect": "^5.7.0",
+    "gulp-debug": "^4.0.0",
+    "gulp-insert": "^0.5.0",
+    "gulp-riot": "^1.1.5",
+    "gulp-sass": "^4.0.2",
+    "gulp-sort": "^2.0.0",
+    "gulp-sourcemaps": "^2.6.4",
+    "gulp-uglify-es": "^1.0.4",
+    "gulp-watch": "^5.0.1"
+  }
 }
