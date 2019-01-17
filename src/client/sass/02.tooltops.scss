@@ -1,0 +1,7 @@
+$zindex: 2000;
+
+.n-tooltip {
+    display: inline;
+    position: absolute;
+    z-index: $zindex;
+}
