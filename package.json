@@ -2,7 +2,7 @@
   "name": "nlib.js",
   "version": "1.0.0",
   "description": "NLib Javascript Library",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -23,6 +23,7 @@
     "body-parser": "^1.18.3",
     "cookie-parser": "^1.4.3",
     "debug": "^4.1.1",
+    "express": "^4.16.4",
     "express-handlebars": "^3.0.0",
     "express-serve-static-core": "^0.1.1",
     "find": "^0.2.9",
