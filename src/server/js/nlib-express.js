@@ -14,6 +14,9 @@ const helmet = require('helmet');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 
+/**
+ * Express Web Server wrapper class.
+ */
 class NWebServer {
     /**
      * Constructor.
@@ -94,6 +97,10 @@ class NWebServer {
      * Start server.
      */
     start() {
+        if (!this._app) {
+            console.log('Express app instance is not assigned.');
+            return;
+        }
         // if change favicon.ico required to restart server.
         let iconFile = path.join(this._opts.paths.public, 'favicon.ico');
         fs.exists(iconFile, (found) => {
@@ -128,6 +135,9 @@ class NWebServer {
 
 exports.NWebServer = NWebServer;
 
+/**
+ * Express Web Route mapping class.
+ */
 class NWebRouter {
     /**
      * Constructor.
