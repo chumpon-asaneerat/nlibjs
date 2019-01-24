@@ -88,6 +88,74 @@ NExpressModule.CookieParser = class {
 
 //#endregion
 
+//#region Static Paths
+
+/**
+ * Static Paths.
+ */
+NExpressModule.StaticPaths = class {
+    static init(server) {
+        if (!server || !server.app) return;
+        console.log('init common static paths....');
+        // max-age variables
+        let libMaxAge = { maxage: '15s' };
+        // path variables
+        let publicPath = server.opts.paths.public;
+        let commonPath = path.join(publicPath, 'lib');
+        let assetPath = path.join(publicPath, 'assets');
+        let imagePath = path.join(assetPath, 'images');
+        let videoPath = path.join(assetPath, 'videos');
+        let audioPath = path.join(assetPath, 'audios');        
+
+        // common lib paths.
+        server.app.use('/lib', express.static(commonPath, libMaxAge));
+        // public paths.
+        server.app.use('/public', express.static(publicPath));
+        // public->assets paths.
+        server.app.use('/images', express.static(imagePath));
+        server.app.use('/videos', express.static(videoPath));
+        server.app.use('/audios', express.static(audioPath));
+    };
+};
+
+//#endregion
+
+//#region Third Party Lib Paths
+
+/**
+ * ThirdParty Lib Paths.
+ */
+NExpressModule.ThirdPartyLibPaths = class {
+    static init(server) {
+        if (!server || !server.app) return;
+        // max-age variables
+        let distMaxAge = { maxage: '1d' };
+        // path variables
+        let cfgPath = server.opts.paths.config;
+        let publicPath = server.opts.paths.public;
+        let distPath = path.join(publicPath, 'dist');
+        let distCfgFile = path.join(cfgPath, 'dist.json');
+
+        try {
+            let obj = fs.readFileSync(distCfgFile, 'utf8');
+            if (obj) {
+                let dist_libs = JSON.parse(obj);
+                dist_libs.forEach(el => {
+                    let localPath = el.path;
+                    console.log('publish `' + localPath + '`');                    
+                    let eachPath = path.join(distPath, localPath);
+                    server.app.use(el.route, express.static(eachPath, distMaxAge));
+                });
+            }
+        }
+        catch (err) {
+            console.error(err);
+        };
+    };
+};
+
+//#endregion
+
 //#region FavIcon
 
 const favicon = require('serve-favicon');
@@ -287,6 +355,7 @@ class NWebServer {
             },
             paths: {
                 root: rootPath,
+                config: path.join(rootPath, 'configs'),
                 public: path.join(rootPath, 'public'),
                 views: path.join(rootPath, 'views')
             }
@@ -351,7 +420,9 @@ class NWebServer {
      * Start server.
      */
     start() {
+        NExpressModule.StaticPaths.init(this);
         NExpressModule.FavIcon.init(this);
+        NExpressModule.ThirdPartyLibPaths.init(this);
         // setup port
         this._app.set('port', process.env.PORT || this._opts.server.port);
         // start server.
