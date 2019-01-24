@@ -14,6 +14,10 @@ const helmet = require('helmet');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 
+// view engine for expressjs.
+const exphbs = require('express-handlebars');
+const hbs = exphbs.create();
+
 /**
  * Express Web Server wrapper class.
  */
@@ -172,3 +176,89 @@ class NWebRouter {
 };
 
 exports.NWebRouter = NWebRouter;
+
+/**
+ * Base express view engine renderer.
+ */
+class NWebRenderer {
+    constructor(server) {
+        this._server = server;
+        this._app = (server) ? server.app : null;
+    };
+    /**
+     * Setup view engine.
+     * 
+     * @param {*} app The Express App.
+     */
+    setup(app) { };
+    /**
+     * Render view file.
+     * 
+     * @param {Object} res The response object.
+     * @param {String} path The view path (relative with views's path).
+     * @param {Object} opts The view render options.
+     */
+    render(res, viewFile, opts) {
+        if (!this._app) {
+            res.status(501).send('Internal Error. Express app instance not found.');
+        }
+        this.setup(this._app);
+        let target = path.join(this.viewPath, viewFile);
+        res.render(target, opts);
+    };
+    /**
+     * Gets server instance.
+     */
+    get server() { return this._server; }
+    /**
+     * Gets Express app instance.
+     */
+    get app() { return this._app; }
+    /**
+     * Gets Views's path.
+     */
+    get viewPath() { return this._server.opts.paths.views; };
+};
+
+exports.NWebRenderer = NWebRenderer;
+
+/**
+ * The Handlebar Renderer.
+ */
+NWebRenderer.HBS = class extends NWebRenderer {
+    /**
+     * setup view engine.
+     * @param {*} app The Express App.
+     */
+    setup(app) {
+        if (!app) return;
+        app.engine('handlebars', hbs.engine)
+        app.set('view engine', 'handlebars');
+    };
+};
+/**
+ * The EJS Renderer.
+ */
+NWebRenderer.EJS = class extends NWebRenderer {
+    /**
+     * setup view engine.
+     * @param {*} app The Express App.
+     */
+    setup(app) {
+        if (!app) return;
+        app.set('view engine', 'ejs');
+    };
+};
+/**
+ * The PUG Renderer.
+ */
+NWebRenderer.PUG = class extends NWebRenderer {
+    /**
+     * setup view engine.
+     * @param {*} app The Express App.
+     */
+    setup(app) {
+        if (!app) return;
+        app.set('view engine', 'pug');
+    };
+};

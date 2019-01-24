@@ -1,5 +1,6 @@
 //const wserv = require('./dist/server/js/nlib-express');
 const wserv = require('./src/server/js/nlib-express');
+
 const NWebServer = wserv.NWebServer;
 const NWebRouter = wserv.NWebRouter;
 
@@ -9,12 +10,10 @@ server.opts.app.version = '0.0.1';
 server.opts.app.lastupdated = '2019-01-25';
 server.opts.server.port = '3000';
 
-const nrender = require('./src/server/js/nlib-renderer');
-const renderer = nrender.NWebRenderer;
-
-const HBS = new renderer.HBS(server);
-const EJS = new renderer.EJS(server);
-const PUG = new renderer.PUG(server);
+const NRenderer = wserv.NWebRenderer;
+const HBS = new NRenderer.HBS(server);
+const EJS = new NRenderer.EJS(server);
+const PUG = new NRenderer.PUG(server);
 
 let routes = [
     new NWebRouter('/', (req, res) => { res.send('`/` Success!'); }),
