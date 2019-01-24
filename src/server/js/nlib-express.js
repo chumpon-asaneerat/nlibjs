@@ -167,7 +167,7 @@ class NWebRouter {
             console.log('Request:', req.url);
             if (!self._callback) {
                 console.log('Request:', req.url, 'callback not assigned.');
-                next();
+                if (next) next();
             }
             else {
                 self._callback(req, res, next);
