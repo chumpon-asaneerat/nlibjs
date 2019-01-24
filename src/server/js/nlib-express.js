@@ -18,6 +18,8 @@ const bodyParser = require('body-parser');
 const exphbs = require('express-handlebars');
 const hbs = exphbs.create();
 
+const cons = require('consolidate');
+
 /**
  * Express Web Server wrapper class.
  */
@@ -260,5 +262,19 @@ NWebRenderer.PUG = class extends NWebRenderer {
     setup(app) {
         if (!app) return;
         app.set('view engine', 'pug');
+    };
+};
+/**
+ * The HTML Renderer.
+ */
+NWebRenderer.HTML = class extends NWebRenderer {
+    /**
+     * setup view engine.
+     * @param {*} app The Express App.
+     */
+    setup(app) {
+        if (!app) return;
+        app.engine('html', cons.hogan);
+        app.set('view engine', 'html');
     };
 };

@@ -14,10 +14,13 @@ const NRenderer = wserv.NWebRenderer;
 const HBS = new NRenderer.HBS(server);
 const EJS = new NRenderer.EJS(server);
 const PUG = new NRenderer.PUG(server);
+const HTML = new NRenderer.HTML(server);
 
 let routes = [
     new NWebRouter('/', (req, res) => { res.send('`/` Success!'); }),
-    new NWebRouter('/home', (req, res) => { res.send('`/home` Success!'); }),
+    new NWebRouter('/home', (req, res) => { 
+        HTML.render(res, 'examples/home');
+    }),
     new NWebRouter('/about', (req, res) => { 
         PUG.render(res, 'examples/about', { title:'About page.', msg: 'This is about page.' });
     }),
