@@ -19,12 +19,9 @@ let routes = [
 ]
 
 routes.forEach(route => { server.get(route); });
-/*
-server.get('/', (req, res) => {
-    console.log('request root url.');
-    res.send('Success!');
-    
+
+server.get('/logout', (req, res) => {
+    res.send('`/logout` Success!');
 });
-*/
 
 server.start();
