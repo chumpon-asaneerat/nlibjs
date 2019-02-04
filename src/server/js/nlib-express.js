@@ -222,7 +222,7 @@ NExpressModule.NExpressViewModule = class {
 
 //#endregion
 
-//#region Handlebar
+//#region Handlebars
 
 const exphbs = require('express-handlebars'); // for HBS (Handlebars)
 const hbs = exphbs.create();
