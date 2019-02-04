@@ -1,3 +1,6 @@
+//const nlib = require('./dist/server/js/nlib-core');
+//const nlib = require('./src/server/js/nlib-core');
+
 //const wserv = require('./dist/server/js/nlib-express');
 const wserv = require('./src/server/js/nlib-express');
 const NWebServer = wserv.NWebServer;
@@ -67,14 +70,23 @@ let routes = [
         let mssql = new NMSSql();
         mssql.config = dbconfig;
 
-        let conn = mssql.create();
-        let cmd = new NMSSql.DbCommand(conn);
+        let cmd = mssql.create();
+
+        console.log('step: 1');
 
         (async function() {
-            await conn.connect();
-            let r1 = await cmd.excute();
-            await conn.disconnect();
-            results.push(r1);
+            console.log('step: 2');
+            try {
+                console.log('step: 3.1.1');
+                let r1 = await cmd.execute();
+                console.log('step: 3.1.2');
+                results.push(r1);
+            }
+            catch (exErr) {
+                console.log('step: 3.2.1');
+                console.log(exErr);
+                results.push(exErr);
+            }
             /*
             let result1 = await conn.request().query('select * from customer');
             console.dir(result1);
@@ -85,9 +97,9 @@ let routes = [
             console.dir(result2);
             results.push(result2);
             */
+           console.log('step: 4');
+           res.send('`/db1 database function 1` Success!\r\n' + JSON.stringify(results));
         })();
-
-        res.send('`/test database function 1` Success!\n' + results);
     }),
 ];
 

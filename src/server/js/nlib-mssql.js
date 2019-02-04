@@ -1,4 +1,7 @@
 const sql = require('mssql');
+const nlib = require('./nlib-core');
+const NResult = nlib.NResult;
+
 
 /*
 const conn = {
@@ -28,14 +31,7 @@ class NMSSql {
     };
 
     create() {
-        let result = null;
-        try {
-            let conn = new sql.ConnectionPool(this._config); //sql.connect(this._config);
-            result = new NMSSql.DbConnection(conn, null);
-        }
-        catch (err) {
-            result = new NMSSql.DbConnection(null, err);
-        }
+        let result = new NMSSql.DbCommand(this._config);
         return result;
     };
 
@@ -43,49 +39,55 @@ class NMSSql {
     set config(value) { this._config = value; }
 };
 
-NMSSql.DbConnection = class {
-    constructor(conn, err) {
-        this._conn = conn;
-        this._err = err;
-    };
-    connect() {
-        if (!this._conn) return;
-        this._conn.connect();
-    };
-    disconnect() {
-        if (!this._conn) return;
-        this._conn.disconnect();
-    };
-    get connection() { return this._conn; }
-    get err() { return this._err; }
-};
-
 NMSSql.DbCommand = class {
-    constructor(conn) {
-        this._conn = conn
+    constructor(config) {
+        this._config = config
         this._cmdType = 'Query'; // Query or StoredProcedure.
         this._text = ''; // Query text or SP Name.
         this._params = [];
     };
 
     execute() {
-        let result = {};
-
-        if (this._conn) {
-            /*
-            if (conn) { 
-                conn.connect().then((pool) => {
-                    return new sql.Request(pool);
-                })
+        let promise = new Promise((resolve, reject) => {
+            let result = new NResult();
+            try {                
+                let conn = new sql.ConnectionPool(this._config);
+                //let conn = new sql.ConnectionPool();
+                conn.connect(connErr => {
+                    if (connErr) {
+                        result.error(null, null, connErr);
+                        reject(result);
+                    }
+                    //else {
+                        let dbReq = new sql.Request(conn);
+                        for (let x = 0; x < 2; x++) {
+                            dbReq.input('name' + x.toString(), sql.NVarChar(50) ,x);
+                        }
+                        //console.log(dbReq);
+                        dbReq.query('select * from customerx', (execErr, dbResult) => {
+                            if (execErr) {
+                                result.error(null, null, execErr);
+                            }
+                            else {
+                                let rs = dbResult.recordsets;
+                                console.log('rs:', rs)
+                                let rows = (rs && rs.length > 0) ? rs[0] : [];
+                                console.log('rows:', rows)
+                                result.result(rows);
+                            }
+                            resolve(result);
+                        });
+                    //}
+                });                
             }
-            */
-            result.data = this._conn.connection;
-        }
+            catch (err) {
+                result.error(null, null, err)
+                reject(result);
+            }
+        });
 
-        return result;
+        return promise;
     };
-
-    get connection() { return this._conn; }
 
     get commandType() { return this._cmdType; }
     set commandType(value) { this._cmdType = value; }
