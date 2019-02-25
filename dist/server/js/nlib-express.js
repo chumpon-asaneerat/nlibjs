@@ -222,7 +222,7 @@ NExpressModule.NExpressViewModule = class {
 
 //#endregion
 
-//#region Handlebar
+//#region Handlebars
 
 const exphbs = require('express-handlebars'); // for HBS (Handlebars)
 const hbs = exphbs.create();
@@ -362,8 +362,9 @@ class NWebServer {
         };
         // express app instance.
         this._app = express();
+        this._server = null;
         // init basic middlewares.
-        NExpressModule.Logger.init(this); // Logger (morgan).        
+        NExpressModule.Logger.init(this); // Logger (morgan).
         NExpressModule.Helmet.init(this); // helmet.
         NExpressModule.BodyParser.init(this); // body parser.
         NExpressModule.CookieParser.init(this); // cookie parser.
@@ -427,7 +428,7 @@ class NWebServer {
         this._app.set('port', process.env.PORT || this._opts.server.port);
         // start server.
         let msg = this.info;
-        let server = this._app.listen(this._app.get('port'), () => {
+        this._server = this._app.listen(this._app.get('port'), () => {
             console.log(msg + ' listening on port `' + server.address().port + '`');
         });
     };
@@ -444,6 +445,10 @@ class NWebServer {
      * Gets express app instance.
      */
     get app() { return this._app; }
+    /**
+     * Gets express listener server instance.
+     */
+    get server() { return this._server; }
     /**
      * Get app information
      */
