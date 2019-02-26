@@ -1,0 +1,9 @@
+{
+  "modules": [
+    "body-parser",
+    "cookie-parser"
+  ],
+  "paths": {
+    "public": "public"
+  }
+}
