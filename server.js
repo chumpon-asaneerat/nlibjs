@@ -24,6 +24,31 @@ app.get('/', (req, res) => {
     res.send('Work!.');
 });
 
+// admin router.
+const adminRoute = new express.Router();
+adminRoute.get('/', (req, res) => {
+    //res.send('admin home page.');
+    res.redirect('/admin/manage');
+});
+adminRoute.get('/manage', (req, res) => {
+    res.send('admin manage.');
+});
+adminRoute.get('/design', (req, res) => {
+    res.send('admin design page.');
+});
+app.use('/admin', adminRoute);
+
+// exclusive router.
+const exclusiveRoute = new express.Router();
+exclusiveRoute.get('/', (req, res) => {
+    res.send('exclusive home page.');    
+});
+exclusiveRoute.get('/report', (req, res) => {
+    res.send('exclusive report page.');    
+});
+app.use('/exclusive', exclusiveRoute);
+
+// http start listen request.
 let http = app.listen(port, () => {
     console.log('listen on port:', port);
 });
