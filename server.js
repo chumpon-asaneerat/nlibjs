@@ -62,6 +62,9 @@ app.get('/login', (req, res) => {
     console.log('token', token);
     //res.setHeader('authorization', 'Bearer ' + token)
     //req.headers['authorization'] = 'Bearer ' + token;
+
+    res.cookie('user', 'xuser', { maxAge: 900000, httpOnly: false });
+
     res.cookie('authorization', token, { maxAge: 900000, httpOnly: true });
     res.json({ 'token': token});
 });
