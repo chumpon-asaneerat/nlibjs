@@ -6,3 +6,4 @@ GET http://localhost:3000/login
 
 ### Access exclusive-report
 GET http://localhost:3000/exclusive/report
+Cookie: authorization = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyaWQiOiIiLCJkYXRhIjoiIiwiaWF0IjoxNTUxNjA0Nzk0fQ.wxYIRfWI4rF_fK5UEt03Zuujp_mEB5rAkwtPQMkwCo8
