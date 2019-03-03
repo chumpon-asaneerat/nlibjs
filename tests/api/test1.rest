@@ -1,2 +1,8 @@
 ### Get route: `/`
 GET http://localhost:3000
+
+### Access login (fake login)
+GET http://localhost:3000/login
+
+### Access exclusive-report
+GET http://localhost:3000/exclusive/report

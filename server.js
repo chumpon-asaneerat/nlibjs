@@ -18,10 +18,52 @@ app.use(bodyParser.raw({ type: 'application/vnd.custom-type' }));
 // parse an HTML body into a string
 app.use(bodyParser.text({ type: 'text/html' }));
 
+const cookieParser = require('cookie-parser');
+app.use(cookieParser());
+
+const jwt = require('jsonwebtoken');
+const jwt_key = 'secret_key'
+
+const checkDevice = (req, res, next) => {
+    next(); // success.
+};
+
+const checkAuth = (req, res, next) => {
+    try {
+        //let token = req.body.token;
+        //let token = req.headers['authorization'];
+        let token = req.cookies['authorization'];
+        let key = jwt_key;
+        console.log(token);
+        let decoded = jwt.verify(token, key);
+        req.userData = decoded;
+        next(); // success.
+    }
+    catch (err) {
+        return res.status(401).json({
+            message: 'Auth failed'
+        })
+    }    
+};
+
 app.get('/', (req, res) => {
     console.log('body', req.body);
     //console.log(res);
     res.send('Work!.');
+});
+
+app.get('/login', (req, res) => {
+    let payload = {
+        userid: '',
+        data: '',
+    };
+    let key = jwt_key;
+    let token = jwt.sign(payload, key);
+    console.log('token', token);
+    //res.setHeader('authorization', 'Bearer ' + token)
+    //req.headers['authorization'] = 'Bearer ' + token;
+    res.cookie('authorization', token, { maxAge: 900000, httpOnly: true });
+    res.json({ 'token': token});
 });
 
 // admin router.
@@ -43,7 +85,7 @@ const exclusiveRoute = new express.Router();
 exclusiveRoute.get('/', (req, res) => {
     res.send('exclusive home page.');    
 });
-exclusiveRoute.get('/report', (req, res) => {
+exclusiveRoute.get('/report', checkAuth, (req, res) => {
     res.send('exclusive report page.');    
 });
 app.use('/exclusive', exclusiveRoute);
