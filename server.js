@@ -3,30 +3,54 @@ const nlib = require('./src/server/js/nlib-core');
 const nexpress = require('./src/server/js/nlib-express');
 const websvr = new nexpress.NWebServer();
 
-const helmet = require('./src/server/js/middlewares/helmet').Helmet;
-const logger = require('./src/server/js/middlewares/logger').Logger;
-const bodyParser = require('./src/server/js/middlewares/body-parser').BodyParser;
-const cookieParser = require('./src/server/js/middlewares/cookie-parser').CookieParser;
+const helmet = require('./src/server/js/middlewares/helmet');
+const logger = require('./src/server/js/middlewares/logger');
+const bodyParser = require('./src/server/js/middlewares/body-parser');
+const cookieParser = require('./src/server/js/middlewares/cookie-parser');
+const favicon = require('./src/server/js/middlewares/favicon');
 
-websvr.init(new helmet());
-websvr.init(new logger());
-websvr.init(new bodyParser());
-websvr.init(new cookieParser());
+let viewEngines = {};
+viewEngines.HTML = require('./src/server/js/middlewares/html-view-engine').HTMLViewEngine;
+viewEngines.PUG = require('./src/server/js/middlewares/pug-view-engine').PUGViewEngine;
+viewEngines.EJS = require('./src/server/js/middlewares/ejs-view-engine').EJSViewEngine;
+viewEngines.HBS = require('./src/server/js/middlewares/handlebar-view-engine').HandlebarViewEngine;
+
+websvr.use(helmet());
+websvr.use(logger());
+websvr.use(bodyParser());
+websvr.use(cookieParser());
+websvr.use(favicon());
+
+websvr.view.HTML = new viewEngines.HTML(websvr);
+websvr.view.PUG = new viewEngines.PUG(websvr);
+websvr.view.EJS = new viewEngines.EJS(websvr);
+websvr.view.HBS = new viewEngines.HBS(websvr);
 
 websvr.app.get('/', (req, res) => {
+    /*
     console.log('body', req.body);
     console.log('query', req.query);
-    //console.log(res);
-    res.send('Work!.');
+    */
+   res.send('Work!.');
 });
 
-websvr.app.post('/api1', (req, res) => {
-    console.log('body', req.body);
-    console.log('query', req.query);
-    //console.log(res);
-    res.send('api1: Work!.');
+websvr.app.get('/about', (req, res, next) => {
+    let pObj = { title:'About page.', msg: 'This is about page.' };
+    websvr.view.PUG.render(res, 'examples/about', pObj);
 });
 
+websvr.app.get('/contact', (req, res, next) => {
+    let pObj = { msg: 'This is Contact page.' };
+    websvr.view.EJS.render(res, 'examples/contact', pObj);
+});
+
+websvr.app.get('/home', (req, res, next) => {
+    websvr.view.HTML.render(res, 'examples/home');
+});
+
+websvr.app.get('/logout', (req, res, next) => {
+    websvr.view.HBS.render(res, 'examples/logout', { msg: 'logout page' });
+});
 
 websvr.start();
 

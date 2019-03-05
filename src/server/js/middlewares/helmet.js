@@ -9,4 +9,4 @@ class Helmet extends EXPRESS.NExpressModule {
     };
 };
 
-exports.Helmet = Helmet;
+module.exports = () => { return new Helmet(); };

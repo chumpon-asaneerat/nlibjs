@@ -1,9 +1,7 @@
-//const path = require('path');
+const path = require('path');
 //const fs = require('fs');
-//const nlib = require('./nlib-core');
-
-//const rootPath = nlib.paths.root;
-
+const nlib = require('./nlib-core');
+const rootPath = nlib.paths.root;
 const express = require('express');
 
 class NExpressModule {
@@ -19,6 +17,25 @@ class NExpressModule {
 
 exports.NExpressModule = NExpressModule;
 
+class NExpressViewModule {
+    constructor(server) {
+        this._server = server;
+    };
+    use() {};
+    render(res, viewFile, opts) {
+        if (!this._server || !this._server.app) return;        
+        // use current view engine.
+        this.use();
+        // render file.
+        let viewPath = this._server.opts.paths.views;
+        let target = path.join(viewPath, viewFile);
+        res.render(target, opts);
+    };
+    get server() { return this._server; }
+};
+
+exports.NExpressViewModule = NExpressViewModule;
+
 class NWebServer {
     constructor() {
         this._app = new express();
@@ -31,18 +48,23 @@ class NWebServer {
             },
             server: {
                 port: 3000
+            },
+            paths: {
+                root: rootPath,
+                config: path.join(rootPath, 'configs'),
+                public: path.join(rootPath, 'public'),
+                views: path.join(rootPath, 'views')
             }
-        }
+        };
+        this._view = {};
     };
-
-    init(middleware) {
+    use(middleware) {
         if (!middleware && !middleware.init) {
             console.log('middleware not implements init function.');
             return;
         }
         middleware.init(this);
     };
-
     start() {
         let port = process.env.PORT || this._opts.server.port;
         // setup port
@@ -56,7 +78,10 @@ class NWebServer {
 
     get app() { return this._app; }
     get opts() { return this._opts; }
+    get middlewares() { return this._middlewares; }
     get httpServer() { return this._httpSvr; }
+    get info() { return '`' + this._opts.app.name + '` v' + this._opts.app.version; }
+    get view() { return this._view; }
 };
 
 exports.NWebServer = NWebServer;
