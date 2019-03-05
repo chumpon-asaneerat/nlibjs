@@ -17,4 +17,4 @@ class BodyParser extends EXPRESS.NExpressModule {
     };
 };
 
-exports.BodyParser = BodyParser;
+module.exports = () => { return new BodyParser(); };

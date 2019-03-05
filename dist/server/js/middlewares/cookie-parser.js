@@ -9,4 +9,4 @@ class CookieParser extends EXPRESS.NExpressModule {
     };
 };
 
-exports.CookieParser = CookieParser;
+module.exports = () => { return new CookieParser(); };

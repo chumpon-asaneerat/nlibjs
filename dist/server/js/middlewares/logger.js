@@ -9,4 +9,4 @@ class Logger extends EXPRESS.NExpressModule {
     };
 };
 
-exports.Logger = Logger;
+module.exports = () => { return new Logger(); };
