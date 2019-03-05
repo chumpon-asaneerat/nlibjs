@@ -1,26 +1,36 @@
 const path = require('path');
 const nlib = require('./src/server/js/nlib-core');
+const nexpress = require('./src/server/js/nlib-express');
+const websvr = new nexpress.NWebServer();
 
-const express = require('express');
-const app = new express();
-const port = 3000;
+const helmet = require('./src/server/js/middlewares/helmet').Helmet;
+const logger = require('./src/server/js/middlewares/logger').Logger;
+const bodyParser = require('./src/server/js/middlewares/body-parser').BodyParser;
+const cookieParser = require('./src/server/js/middlewares/cookie-parser').CookieParser;
 
-const logger = require('morgan');
-app.use(logger('dev'));
+websvr.init(new helmet());
+websvr.init(new logger());
+websvr.init(new bodyParser());
+websvr.init(new cookieParser());
 
-const bodyParser = require('body-parser');
-// parse various different custom JSON types as JSON
-app.use(bodyParser.json({ type: 'application/*+json' }));
-// parse application/x-www-form-urlencoded
-app.use(bodyParser.urlencoded({ extended: true }));
-// parse some custom thing into a Buffer
-app.use(bodyParser.raw({ type: 'application/vnd.custom-type' }));
-// parse an HTML body into a string
-app.use(bodyParser.text({ type: 'text/html' }));
+websvr.app.get('/', (req, res) => {
+    console.log('body', req.body);
+    console.log('query', req.query);
+    //console.log(res);
+    res.send('Work!.');
+});
 
-const cookieParser = require('cookie-parser');
-app.use(cookieParser());
+websvr.app.post('/api1', (req, res) => {
+    console.log('body', req.body);
+    console.log('query', req.query);
+    //console.log(res);
+    res.send('api1: Work!.');
+});
 
+
+websvr.start();
+
+/*
 const jwt = require('jsonwebtoken');
 const jwt_key = 'secret_key'
 
@@ -97,6 +107,8 @@ app.use('/exclusive', exclusiveRoute);
 let http = app.listen(port, () => {
     console.log('listen on port:', port);
 });
+
+*/
 
 /*
 const NJson = nlib.NJson;
