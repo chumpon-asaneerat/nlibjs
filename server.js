@@ -1,18 +1,18 @@
 const path = require('path');
 const nlib = require('./src/server/js/nlib-core');
 const nexpress = require('./src/server/js/nlib-express');
-const mwares = require('./src/server/js/nlib-express-middleware');
 
 const websvr = new nexpress.NWebServer();
+const mwares = require('./src/server/js/nlib-express-middleware');
+const jwtsvr = require('./src/server/js/nlib-jwt');
+const jwt = new jwtsvr.NJwtService();
 
 mwares(websvr);
 
 websvr.app.get('/', (req, res) => {
-    /*
-    console.log('body', req.body);
-    console.log('query', req.query);
-    */
-   res.send('Work!.');
+    let name = `x-device`;
+    let xdevice = jwtsvr.parse(req, name);
+    res.send('Work!. device token: ' + xdevice);
 });
 
 websvr.app.get('/about', (req, res, next) => {
@@ -20,9 +20,11 @@ websvr.app.get('/about', (req, res, next) => {
     websvr.view.PUG.render(res, 'examples/about', pObj);
 });
 
-websvr.app.get('/contact', (req, res, next) => {
-    let pObj = { msg: 'This is Contact page.' };
-    websvr.view.EJS.render(res, 'examples/contact', pObj);
+websvr.app.get('/contact', jwt.validateDevice, (req, res, next) => {
+    let name = `x-device`;
+    let xdevice = jwtsvr.parse(req, name);
+    let pObj = { msg: 'This is Contact page. device token: ' + xdevice };
+    websvr.view.EJS.render(res, 'examples/contact', pObj);    
 });
 
 websvr.app.get('/home', (req, res, next) => {
@@ -36,7 +38,7 @@ websvr.app.get('/logout', (req, res, next) => {
 websvr.start();
 
 /*
-const jwt = require('jsonwebtoken');
+
 const jwt_key = 'secret_key'
 
 const checkDevice = (req, res, next) => {
