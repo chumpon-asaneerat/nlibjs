@@ -1,30 +1,11 @@
 const path = require('path');
 const nlib = require('./src/server/js/nlib-core');
 const nexpress = require('./src/server/js/nlib-express');
+const mwares = require('./src/server/js/nlib-express-middleware');
+
 const websvr = new nexpress.NWebServer();
 
-const helmet = require('./src/server/js/middlewares/helmet');
-const logger = require('./src/server/js/middlewares/logger');
-const bodyParser = require('./src/server/js/middlewares/body-parser');
-const cookieParser = require('./src/server/js/middlewares/cookie-parser');
-const favicon = require('./src/server/js/middlewares/favicon');
-
-let viewEngines = {};
-viewEngines.HTML = require('./src/server/js/middlewares/html-view-engine').HTMLViewEngine;
-viewEngines.PUG = require('./src/server/js/middlewares/pug-view-engine').PUGViewEngine;
-viewEngines.EJS = require('./src/server/js/middlewares/ejs-view-engine').EJSViewEngine;
-viewEngines.HBS = require('./src/server/js/middlewares/handlebar-view-engine').HandlebarViewEngine;
-
-websvr.use(helmet());
-websvr.use(logger());
-websvr.use(bodyParser());
-websvr.use(cookieParser());
-websvr.use(favicon());
-
-websvr.view.HTML = new viewEngines.HTML(websvr);
-websvr.view.PUG = new viewEngines.PUG(websvr);
-websvr.view.EJS = new viewEngines.EJS(websvr);
-websvr.view.HBS = new viewEngines.HBS(websvr);
+mwares(websvr);
 
 websvr.app.get('/', (req, res) => {
     /*
