@@ -96,7 +96,10 @@ class NCookie {
             res.cookie(name, data, opts);
         }
         else {
-            res.cookie(name, data, { httpOnly: true });
+            // 1 hour : 1 * 60 * 60 * 1000.
+            // 1 day : 1 * 24 * 60 * 60 * 1000.
+            let day = 1 * 24 * 60 * 60 * 1000;
+            res.cookie(name, data, { maxAge: 1 * day, httpOnly: true });
         }
     };
 };
