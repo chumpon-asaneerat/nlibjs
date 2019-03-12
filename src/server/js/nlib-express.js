@@ -15,7 +15,7 @@ class NExpressModule {
     }
 };
 
-exports.NExpressModule = NExpressModule;
+module.exports.NExpressModule = exports.NExpressModule = NExpressModule;
 
 class NExpressViewModule {
     constructor(server) {
@@ -34,7 +34,7 @@ class NExpressViewModule {
     get server() { return this._server; }
 };
 
-exports.NExpressViewModule = NExpressViewModule;
+module.exports.NExpressViewModule = exports.NExpressViewModule = NExpressViewModule;
 
 class NWebServer {
     constructor() {
@@ -84,4 +84,21 @@ class NWebServer {
     get view() { return this._view; }
 };
 
-exports.NWebServer = NWebServer;
+module.exports.NWebServer = exports.NWebServer = NWebServer;
+
+class NCookie {
+    static parse(req, name) {
+        return (req && req.cookies && req.cookies[name]) ? req.cookies[name] : null;
+    };
+    static store(res, name, data, opts) {
+        if (!res) return;
+        if (opts) {
+            res.cookie(name, data, opts);
+        }
+        else {
+            res.cookie(name, data, { httpOnly: true });
+        }
+    };
+};
+
+module.exports.NCookie = exports.NCookie = NCookie;

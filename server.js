@@ -3,6 +3,8 @@ const nlib = require('./src/server/js/nlib-core');
 const nexpress = require('./src/server/js/nlib-express');
 
 const websvr = new nexpress.NWebServer();
+const ncookie = nexpress.NCookie;
+
 const mwares = require('./src/server/js/nlib-express-middleware');
 const jwtsvr = require('./src/server/js/nlib-jwt');
 const jwt = new jwtsvr.NJwtService();
@@ -11,7 +13,7 @@ mwares(websvr);
 
 websvr.app.get('/', (req, res) => {
     let name = `x-device`;
-    let xdevice = jwtsvr.parse(req, name);
+    let xdevice = ncookie.parse(req, name);
     res.send('Work!. device token: ' + xdevice);
 });
 
@@ -22,7 +24,7 @@ websvr.app.get('/about', (req, res, next) => {
 
 websvr.app.get('/contact', jwt.validateDevice, (req, res, next) => {
     let name = `x-device`;
-    let xdevice = jwtsvr.parse(req, name);
+    let xdevice = ncookie.parse(req, name);
     let pObj = { msg: 'This is Contact page. device token: ' + xdevice };
     websvr.view.EJS.render(res, 'examples/contact', pObj);    
 });
